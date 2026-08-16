@@ -57,25 +57,35 @@ Source: Bouvier et al. 2025, *Scientific Data* (OpenIFS@home / CPDN). Full ensem
 
 Background parameters (XML) and per-storm tracked features (CSV) are parsed separately, merged on `unique_member_id`, and passed through a set of sanity checks (parameter ranges, track-index cardinality, no more than 3 storms per run). Not every ensemble member produced a trackable storm — some background states are too stable for baroclinic instability to spin up a coherent storm within the simulation window.
 
-<img src="figures/01_storms_per_run.png" width="500">
+<p align="center">
+  <img src="figures/01_storms_per_run.png" width="500">
+</p>
 
 ### 5. Exploratory data analysis
 
 **Target variable distributions.** Several severity targets (SSI, both windstorm-footprint metrics) are heavily right-skewed with a large mass at or near zero — this shapes the log-transform and modelling choices made later.
 
-![Target variable distributions](figures/02_target_distributions.png)
+<p align="center">
+  <img src="figures/02_target_distributions.png" alt="Target variable distributions">
+</p>
 
 **Background parameter distributions.** The 7 perturbed parameters as actually sampled across the ensemble.
 
-![Background parameter distributions](figures/03_param_distributions.png)
+<p align="center">
+  <img src="figures/03_param_distributions.png" alt="Background parameter distributions">
+</p>
 
 **Linear correlations between background parameters and targets.** A first, purely linear screen of which parameters associate with which outcomes — `u0` (zonal wind) and `b` (jet height) stand out; `Tv0`, `RH0`, and `charnock` show almost no linear signal.
 
-![Correlation heatmap](figures/04_param_target_correlation.png)
+<p align="center">
+  <img src="figures/04_param_target_correlation.png" alt="Correlation heatmap">
+</p>
 
 **Pairwise relationships between key targets.** A sample of 3,000 storms showing how peak vorticity, peak wind speed, minimum MSLP, and SSI relate to one another — an early hint of the two-dimensional structure (core intensity vs. impact/footprint) that PCA and clustering make precise below.
 
-![Pairplot of key targets](figures/05_pairplot_key_targets.png)
+<p align="center">
+  <img src="figures/05_pairplot_key_targets.png" alt="Pairplot of key targets">
+</p>
 
 ### 6–7. Deduplication and dimensionality reduction
 
@@ -83,25 +93,35 @@ One storm is selected per ensemble member (the highest-SSI storm), then the 7 se
 
 **Explained variance and loadings.** PC1 alone explains 76.8% of variance and loads heavily on core-intensity metrics (MaxVo, MinMSLP, MaxWS10, Vort deepening); PC2 is dominated by SSI/WFP.
 
-![PCA variance and loadings](figures/06_pca_variance_loadings.png)
+<p align="center">
+  <img src="figures/06_pca_variance_loadings.png" alt="PCA variance and loadings">
+</p>
 
 **PC1/PC2 scatter, colored by SSI and by MaxVo.** Confirms PC1 tracks core intensity and PC2 tracks the impact/footprint dimension.
 
-![PCA scatter by SSI and MaxVo](figures/07_pca_scatter_by_ssi_maxvo.png)
+<p align="center">
+  <img src="figures/07_pca_scatter_by_ssi_maxvo.png" alt="PCA scatter by SSI and MaxVo">
+</p>
 
 ### 8. Clustering storms into severity regimes
 
 **Model selection.** BIC/AIC (GMM) and inertia (KMeans) across candidate cluster counts.
 
-![Cluster model selection](figures/08_cluster_model_selection.png)
+<p align="center">
+  <img src="figures/08_cluster_model_selection.png" alt="Cluster model selection">
+</p>
 
 **KMeans (k=7) vs. GMM (k=5).** Both methods are fit on the full 7-dimensional standardized target space (not the 2D PCA projection) and agree closely.
 
-![KMeans vs GMM](figures/09_kmeans_vs_gmm_clusters.png)
+<p align="center">
+  <img src="figures/09_kmeans_vs_gmm_clusters.png" alt="KMeans vs GMM">
+</p>
 
 **Final GMM clustering (k=5).** The five Gaussian components separate cleanly along PC1/PC2 even though clustering never saw that 2D plane — a sign the two dominant PCA directions align with the same structure the full 7D fit found.
 
-![GMM clusters in PC space](figures/10_gmm_clusters_pc_space.png)
+<p align="center">
+  <img src="figures/10_gmm_clusters_pc_space.png" alt="GMM clusters in PC space">
+</p>
 
 > **Note on reading this plot:** the (x, y) position of each point comes from PCA (2D, for display only); the color comes from the GMM fit on the full 7D target space. They are two independent calculations laid on top of one another.
 
@@ -109,15 +129,21 @@ One storm is selected per ensemble member (the highest-SSI storm), then the 7 se
 
 Clusters are ranked by mean SSI and mapped to human-readable labels: `null`, `weak`, `moderate`, `severe`, `anomalous_footprint`.
 
-![Severity regimes, labeled](figures/12_severity_regimes_labeled.png)
+<p align="center">
+  <img src="figures/12_severity_regimes_labeled.png" alt="Severity regimes, labeled">
+</p>
 
 **Recovering regime membership from background parameters alone.** A small classifier (2 hidden layers, batch norm, dropout) trained on the 7 background parameters predicts regime membership with high accuracy — the confusion matrix below shows most disagreement is between adjacent severity levels (e.g. `weak` vs. `null`), not across the full spectrum.
 
-![Confusion matrix](figures/11_confusion_matrix.png)
+<p align="center">
+  <img src="figures/11_confusion_matrix.png" alt="Confusion matrix">
+</p>
 
 **Regime membership in background-parameter space.** Plotting regime against `u0` (zonal wind) and `b` (jet height) directly shows why the classifier works: severity increases roughly monotonically with jet strength and height.
 
-![Regime by background params](figures/13_regime_by_background_params.png)
+<p align="center">
+  <img src="figures/13_regime_by_background_params.png" alt="Regime by background params">
+</p>
 
 ### 12. Predicting storm severity from background parameters (regression MLP)
 
@@ -125,17 +151,25 @@ A feedforward network (3 hidden layers, batch norm, dropout, early stopping) pre
 
 **All 7 targets.** Core-intensity metrics (MaxVo, MinMSLP, MaxWS10, Vort deepening) are predicted well (R² 0.92–0.97); SSI and both WFP metrics are predicted poorly (R² −0.14 to 0.76), consistent with their zero-inflated, path-dependent nature.
 
-![Predicted vs actual, all targets](figures/14_predicted_vs_actual_all_targets.png)
+<p align="center">
+  <img src="figures/14_predicted_vs_actual_all_targets.png" alt="Predicted vs actual, all targets">
+</p>
 
 **Best-performing targets, enlarged.**
 
-![Predicted vs actual, best targets](figures/15_predicted_vs_actual_best_targets.png)
+<p align="center">
+  <img src="figures/15_predicted_vs_actual_best_targets.png" alt="Predicted vs actual, best targets">
+</p>
 
 > **Interpretation.** Core intensity is close to a deterministic function of the initial jet configuration — consistent with linear baroclinic instability theory (e.g. Eady growth rate) — which is why the MLP fits it so cleanly. Impact/footprint severity (SSI, WFP) depends on path-dependent, trajectory-level details (where the storm actually went, not just how energetically it started growing) that the 7 background parameters do not fully constrain. **Storm severity in this system has at least two separable dimensions: a well-determined core-intensity dimension, and a much less-determined impact/footprint dimension.**
 
 ### 13. Interactive 3D visualization of severity regimes
 
-Every storm plotted in the space of three background parameters (`u0`, `b`, `Tv0`), colored by severity regime. Rotate and explore in your browser:
+Every storm plotted in the space of three background parameters (`u0`, `b`, `Tv0`), colored by severity regime, rotated with the mouse:
+
+<p align="center">
+  <img src="figures/3D_regimes.gif" width="700" alt="Severity regime across 3 background params">
+</p>
 
 **[→ Open interactive 3D plot (background params)](figures/16_severity_regimes_3d_interactive.html)**
 
@@ -143,7 +177,9 @@ Every storm plotted in the space of three background parameters (`u0`, `b`, `Tv0
 
 A 5-model deep ensemble quantifies prediction confidence for peak vorticity (MaxVo): ensemble mean vs. actual, point size = residual error, point color = ensemble disagreement.
 
-![Ensemble uncertainty map](figures/17_ensemble_uncertainty_maxvo.png)
+<p align="center">
+  <img src="figures/17_ensemble_uncertainty_maxvo.png" alt="Ensemble uncertainty map">
+</p>
 
 > **Interpretation.** The model is accurate and confident for strong, clearly-developed storms (small, pale points tight to the diagonal at high MaxVo). Its real weak spot is weak/transitional storms at low MaxVo, where the ensemble disagrees with itself most — likely because these sit closest to the "did a storm even really form" threshold, which is inherently noisier than a clearly-developed severe storm.
 
@@ -151,7 +187,9 @@ A 5-model deep ensemble quantifies prediction confidence for peak vorticity (Max
 
 Distribution of each background parameter within `anomalous_footprint` vs. all other regimes combined.
 
-![Anomalous footprint distributions](figures/18_anomalous_footprint_distributions.png)
+<p align="center">
+  <img src="figures/18_anomalous_footprint_distributions.png" alt="Anomalous footprint distributions">
+</p>
 
 > **Interpretation.** Six of the seven background parameters show little to no distributional signature. The exception is `Tv0` (initial virtual temperature): `anomalous_footprint` storms concentrate around 285–300K, while the general population spans a much wider range including a lower mode around 265–280K that anomalous storms essentially never touch. This is the first point in the analysis where `Tv0` shows up as meaningfully important — elsewhere it is one of the weakest predictors of core intensity — suggesting temperature matters specifically for the footprint/impact dimension of severity, largely independent of core intensity.
 
@@ -185,7 +223,7 @@ pip install -r requirements.txt
 jupyter lab notebooks/baroclinic_storm_severity_regimes.ipynb
 ```
 
-Point `XML_PATH` and `FEATURES_DIR` (first code cell) at your local copies of the dataset, then run all cells. Every figure is written to `figures/` as the notebook runs — both static PNGs, the `PC_cluster_3D.gif` walkthrough, and, for the two interactive Plotly views, standalone HTML (plus a static PNG snapshot if the optional `kaleido` package is installed).
+Point `XML_PATH` and `FEATURES_DIR` (first code cell) at your local copies of the dataset, then run all cells. Every figure is written to `figures/` as the notebook runs — both static PNGs, the `PC_cluster_3D.gif` and `3D_regimes.gif` walkthroughs, and, for the two interactive Plotly views, standalone HTML (plus a static PNG snapshot if the optional `kaleido` package is installed).
 
 ---
 
