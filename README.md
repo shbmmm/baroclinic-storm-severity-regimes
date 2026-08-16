@@ -4,6 +4,14 @@
 
 This repository analyzes a large ensemble of OpenIFS (Open Integrated Forecasting System) idealised baroclinic-wave simulations. Each ensemble member was initialised with a different combination of seven background atmospheric parameters — jet strength, jet height/shape, static stability, initial humidity, lapse rate, sea-surface roughness (Charnock parameter), and a categorical zonal-wavenumber parameter — and run forward to let baroclinic instability grow, mature, and (where it succeeds) spin up an extratropical storm. Every storm that formed was tracked, and each track was summarised by a set of severity metrics: peak relative vorticity, minimum sea-level pressure, peak 10 m wind speed, vorticity deepening rate, a Storm Severity Index (SSI), and windstorm footprint metrics at two wind-speed thresholds.
 
+Here's a quick look at what falls out of this analysis before diving into the details: every storm plotted in full 3D principal-component space (see [§16](#16-severity-regimes-in-full-3d-pca-space) for the write-up), colored by severity regime, rotating so you can see how cleanly the five regimes — `null`, `weak`, `moderate`, `severe`, `anomalous_footprint` — separate along a single dominant axis of increasing storm severity.
+
+<video src="https://github.com/shbmmm/baroclinic-storm-severity-regimes/raw/main/figures/PC_clustering.mov" controls width="700">
+  Your browser doesn't support inline video — <a href="figures/PC_clustering.mov">download and watch PC_clustering.mov</a> directly.
+</video>
+
+*(If the player above doesn't render for you, [download the video directly](figures/PC_clustering.mov). `.mov` plays natively in Safari; if it doesn't play in Chrome/Firefox, see the conversion note in [Reproducing this analysis](#reproducing-this-analysis). For a version you can rotate and explore yourself rather than just watch, see the [interactive HTML plot in §16](figures/19_severity_regimes_3d_pca_interactive.html).)*
+
 The analysis asks three linked questions of that dataset:
 
 1. **Structure** — Do the storms produced by this ensemble fall into a small number of natural *severity regimes*, or does severity vary continuously?
@@ -93,6 +101,7 @@ One storm is selected per ensemble member (the highest-SSI storm), then the 7 se
 
 > **Note on reading this plot:** the (x, y) position of each point comes from PCA (2D, for display only); the color comes from the GMM fit on the full 7D target space. They are two independent calculations laid on top of one another.
 
+
 ### 9–11. Naming and visualizing the regimes
 
 Clusters are ranked by mean SSI and mapped to human-readable labels: `null`, `weak`, `moderate`, `severe`, `anomalous_footprint`.
@@ -174,6 +183,15 @@ jupyter lab notebooks/baroclinic_storm_severity_regimes.ipynb
 ```
 
 Point `XML_PATH` and `FEATURES_DIR` (first code cell) at your local copies of the dataset, then run all cells. Every figure is written to `figures/` as the notebook runs — both static PNGs and, for the two interactive Plotly views, standalone HTML (plus a static PNG snapshot if the optional `kaleido` package is installed).
+
+**Converting the walkthrough video to MP4** (recommended for broad browser compatibility — `.mov` is Safari-only in most browsers' `<video>` tag):
+
+```bash
+ffmpeg -i figures/PC_clustering.mov -vcodec libx264 -crf 23 -acodec aac figures/PC_clustering.mp4
+```
+
+If you switch to `.mp4`, update the `<video src="...">` path in the README's video section accordingly (swap `.mov` for `.mp4`), then re-commit.
+
 
 ---
 
