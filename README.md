@@ -40,10 +40,14 @@ The notebook writes every figure below to `figures/` automatically as it runs (s
 
 ## Data
 
-- **Background parameters** — `openifs_submission.xml`: one `<workunit>` element per ensemble member, storing the 7 perturbed background parameters (`n`, `b`, `u0`, `Tv0`, `RH0`, `lapse_rate`, `charnock`).
-- **Storm-tracked features** — `ExtractedFeatures/*.csv`: one file per `(unique_member_id, track_index)` pair, storing up to 3 tracked storms per ensemble member together with their peak-intensity and impact metrics.
+Source: Bouvier et al. 2025, *Scientific Data* (OpenIFS@home / CPDN). Full ensemble of 6,500 idealised moist baroclinic-wave simulations (6,388 successful), run with OpenIFS cycle 43R3v2 at T<sub>L</sub>159 (~125 km grid, 91 sigma levels), 3-hourly output over a 20-day forecast.
 
-> Data files are not included in this repository (see `.gitignore`). Point `XML_PATH` and `FEATURES_DIR` at the top of the notebook to your local copies before running. Dataset provenance and citation are listed in [Citations](#citations) below.
+- **Background parameters** — `openifs_submission.xml`: one `<workunit>` element per ensemble member, storing the 7 perturbed background parameters (`n`, `b`, `u0`, `Tv0`, `RH0`, `lapse_rate`, `charnock`). `unique_member_id` (a000–a50j) is the join key to the feature CSVs — not `ensemble_member_number`. Note `RH0` is stored as a fraction (0–0.8) in the XML even though the paper's Table 1 reports it in % (0–80).
+- **Storm-tracked features** — `ExtractedFeatures/*.csv`: 22,259 files (~39.3 MB total). One `{unique_member_id}_general.csv` per successful run (background-only features, independent of storm formation), plus up to three `{unique_member_id}_{0,1,2}.csv` files — one row per tracked cyclone (TRACK keeps the first 3 per run). 89 features total across four categories: background-related, track-related, dynamical intensity, and impact-relevant intensity. The current notebook uses seven of these as regression targets: `MaxVo`, `MinMSLP`, `Vort deepening`, `MaxWS10`, `SSI at MaxVo`, `WFP at MaxVo at 15.0`, `WFP at MaxVo at 20.0`.
+- **Join logic** — one run maps to zero–three storm rows, so a tidy ML table is keyed by `(unique_member_id, track_index)`, not by run alone. Train/test splits must be done at the `unique_member_id` (run) level: storms from the same run share background parameters, so row-level splitting leaks information between train and test.
+- **Raw model output** (`batch_1018/`, not used by this notebook) — 6,388 run folders of GRIB fields, 28 physical variables at 19 pressure levels plus surface, ~10.34 TB total. Not included in this repository; see `.gitignore`.
+
+> Data files are not included in this repository. Point `XML_PATH` and `FEATURES_DIR` at the top of the notebook to your local copies before running.
 
 ---
 
@@ -100,7 +104,6 @@ One storm is selected per ensemble member (the highest-SSI storm), then the 7 se
 ![GMM clusters in PC space](figures/10_gmm_clusters_pc_space.png)
 
 > **Note on reading this plot:** the (x, y) position of each point comes from PCA (2D, for display only); the color comes from the GMM fit on the full 7D target space. They are two independent calculations laid on top of one another.
-
 
 ### 9–11. Naming and visualizing the regimes
 
@@ -175,7 +178,7 @@ Taken together, the strongest single finding is structural rather than numerical
 ## Reproducing this analysis
 
 ```bash
-git clone <this-repo-url>
+git clone https://github.com/shbmmm/baroclinic-storm-severity-regimes.git
 cd baroclinic-storm-severity-regimes
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
@@ -192,24 +195,24 @@ ffmpeg -i figures/PC_clustering.mov -vcodec libx264 -crf 23 -acodec aac figures/
 
 If you switch to `.mp4`, update the `<video src="...">` path in the README's video section accordingly (swap `.mov` for `.mp4`), then re-commit.
 
-
 ---
 
 ## Citations
 
-> **To fill in:** replace the placeholders below with exact dataset DOIs/version numbers, the OpenIFS model-cycle reference, and the package versions used for the run that produced the figures in `figures/`.
-
 **Dataset**
-- OpenIFS perturbed-physics baroclinic-wave ensemble — background parameters (`openifs_submission.xml`) and tracked storm features (`ExtractedFeatures/`). *[ADD: dataset title, authors, repository, DOI, access date.]*
+- Bouvier, C., Cornér, J., Toropainen, A., Bowery, A., Carver, G., Sparrow, S., Wallom, D. & Sinclair, V. A. Baroclinic Wave Simulation Ensemble: a machine learning ready dataset. *Scientific Data* **12**, 1811 (2025). https://doi.org/10.1038/s41597-025-06089-z
+- Dataset repository: Bouvier, C. et al. Baroclinic wave simulation ensemble: a machine learning ready dataset. University of Helsinki / FairData.fi (2025). https://doi.org/10.23729/fd-b84c06b2-0950-3bd4-bb98-defc0518eaf5
+- Companion code/config: Bouvier, C., van den Broek, D., Ekblom, M. & Sinclair, V. A. bouvierc/Baroclinic lifecycles: OpenIFS initial background states and experiments. Zenodo (2024). https://doi.org/10.5281/zenodo.10592587
 
 **Model**
-- ECMWF OpenIFS. *[ADD: model cycle / version number and reference publication or user guide.]*
+- ECMWF OpenIFS, cycle 43R3v2 (operational at ECMWF July 2017 – June 2018). ECMWF, *IFS Documentation CY43R3 – Part III: Dynamics and numerical procedures* (2017).
+- Bouvier, C., van den Broek, D., Ekblom, M. & Sinclair, V. A. Analytical and adaptable initial conditions for dry and moist baroclinic waves in the global hydrostatic model OpenIFS (CY43R3). *Geoscientific Model Development* **17**, 2961–2986 (2024). https://doi.org/10.5194/gmd-17-2961-2024
 
 **Software**
-- Python *[ADD version]*, NumPy, pandas, Matplotlib, Seaborn, scikit-learn, PyTorch, Plotly (see `requirements.txt` for pinned versions).
+- Python, NumPy, pandas, Matplotlib, Seaborn, scikit-learn, PyTorch, Plotly (see `requirements.txt` for pinned versions).
 
 **Suggested citation for this repository**
-> *[ADD: Author name(s)]*, *Baroclinic Storm Severity Regimes in a Perturbed-Physics OpenIFS Ensemble*, *[ADD: year]*. *[ADD: repository URL / DOI once published.]*
+> Shubham, *Baroclinic Storm Severity Regimes in a Perturbed-Physics OpenIFS Ensemble*, 2026. https://github.com/shbmmm/baroclinic-storm-severity-regimes
 
 ---
 
