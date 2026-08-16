@@ -1,0 +1,9 @@
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+torch
+plotly
+kaleido       # optional: enables static PNG export of the interactive 3D figures
+jupyterlab
