@@ -6,7 +6,9 @@ This repository analyzes a large ensemble of OpenIFS (Open Integrated Forecastin
 
 Here's a quick look at what falls out of this analysis before diving into the details: every storm plotted in full 3D principal-component space (see [§16](#16-severity-regimes-in-full-3d-pca-space) for the write-up), colored by severity regime, rotating so you can see how cleanly the five regimes — `null`, `weak`, `moderate`, `severe`, `anomalous_footprint` — separate along a single dominant axis of increasing storm severity.
 
-![Storm severity regimes in 3D PCA space](figures/PC_cluster_3D.gif)
+<p align="center">
+  <img src="figures/PC_cluster_3D.gif" width="700" alt="Storm severity regimes in 3D PCA space">
+</p>
 
 *(For a version you can rotate and explore yourself rather than just watch, see the [interactive HTML plot in §16](figures/19_severity_regimes_3d_pca_interactive.html).)*
 
