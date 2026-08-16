@@ -6,11 +6,9 @@ This repository analyzes a large ensemble of OpenIFS (Open Integrated Forecastin
 
 Here's a quick look at what falls out of this analysis before diving into the details: every storm plotted in full 3D principal-component space (see [§16](#16-severity-regimes-in-full-3d-pca-space) for the write-up), colored by severity regime, rotating so you can see how cleanly the five regimes — `null`, `weak`, `moderate`, `severe`, `anomalous_footprint` — separate along a single dominant axis of increasing storm severity.
 
-<video src="https://github.com/shbmmm/baroclinic-storm-severity-regimes/raw/main/figures/PC_cluster_3D.gif" controls width="400">
-  Your browser doesn't support inline video — <a href="figures/PC_cluster_3D.gif">download and watch PC_cluster_3D.gif</a> directly.
-</video>
+![Storm severity regimes in 3D PCA space](figures/PC_cluster_3D.gif)
 
-*(If the player above doesn't render for you, [download the video directly](figures/PC_clustering.mov). `.mov` plays natively in Safari; if it doesn't play in Chrome/Firefox, see the conversion note in [Reproducing this analysis](#reproducing-this-analysis). For a version you can rotate and explore yourself rather than just watch, see the [interactive HTML plot in §16](figures/19_severity_regimes_3d_pca_interactive.html).)*
+*(For a version you can rotate and explore yourself rather than just watch, see the [interactive HTML plot in §16](figures/19_severity_regimes_3d_pca_interactive.html).)*
 
 The analysis asks three linked questions of that dataset:
 
@@ -185,15 +183,7 @@ pip install -r requirements.txt
 jupyter lab notebooks/baroclinic_storm_severity_regimes.ipynb
 ```
 
-Point `XML_PATH` and `FEATURES_DIR` (first code cell) at your local copies of the dataset, then run all cells. Every figure is written to `figures/` as the notebook runs — both static PNGs and, for the two interactive Plotly views, standalone HTML (plus a static PNG snapshot if the optional `kaleido` package is installed).
-
-**Converting the walkthrough video to MP4** (recommended for broad browser compatibility — `.mov` is Safari-only in most browsers' `<video>` tag):
-
-```bash
-ffmpeg -i figures/PC_clustering.mov -vcodec libx264 -crf 23 -acodec aac figures/PC_clustering.mp4
-```
-
-If you switch to `.mp4`, update the `<video src="...">` path in the README's video section accordingly (swap `.mov` for `.mp4`), then re-commit.
+Point `XML_PATH` and `FEATURES_DIR` (first code cell) at your local copies of the dataset, then run all cells. Every figure is written to `figures/` as the notebook runs — both static PNGs, the `PC_cluster_3D.gif` walkthrough, and, for the two interactive Plotly views, standalone HTML (plus a static PNG snapshot if the optional `kaleido` package is installed).
 
 ---
 
