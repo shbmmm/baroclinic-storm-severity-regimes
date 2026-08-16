@@ -6,8 +6,8 @@ This repository analyzes a large ensemble of OpenIFS (Open Integrated Forecastin
 
 Here's a quick look at what falls out of this analysis before diving into the details: every storm plotted in full 3D principal-component space (see [§16](#16-severity-regimes-in-full-3d-pca-space) for the write-up), colored by severity regime, rotating so you can see how cleanly the five regimes — `null`, `weak`, `moderate`, `severe`, `anomalous_footprint` — separate along a single dominant axis of increasing storm severity.
 
-<video src="https://github.com/shbmmm/baroclinic-storm-severity-regimes/raw/main/figures/PC_clustering.mov" controls width="400">
-  Your browser doesn't support inline video — <a href="figures/PC_clustering.mov">download and watch PC_clustering.mov</a> directly.
+<video src="https://github.com/shbmmm/baroclinic-storm-severity-regimes/raw/main/figures/PC_cluster_3D.gif" controls width="400">
+  Your browser doesn't support inline video — <a href="figures/PC_cluster_3D.gif">download and watch PC_cluster_3D.gif</a> directly.
 </video>
 
 *(If the player above doesn't render for you, [download the video directly](figures/PC_clustering.mov). `.mov` plays natively in Safari; if it doesn't play in Chrome/Firefox, see the conversion note in [Reproducing this analysis](#reproducing-this-analysis). For a version you can rotate and explore yourself rather than just watch, see the [interactive HTML plot in §16](figures/19_severity_regimes_3d_pca_interactive.html).)*
